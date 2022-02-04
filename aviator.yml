@@ -4,9 +4,9 @@ spruce:
       - meta
     merge:
       - with_in: ci/
-        regexp: ".*.yml"
+        regexp: ".*yml"
       - with_in: ci/jobs/
-        regexp: ".*.yml"
+      - with_in: ci/jobs/ami-test/
     to: aviator_pipeline.yml
 fly:
   name: dataworks-aws-collections-rehydration

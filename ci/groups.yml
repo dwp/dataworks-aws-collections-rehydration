@@ -1,11 +1,20 @@
 groups:
   - name: master
     jobs:
-      - development
-      - qa
+      - dataworks-aws-collections-rehydration-dev
+      - dataworks-aws-collections-rehydration-qa
+      - dataworks-aws-collections-rehydration-int
+      - dataworks-aws-collections-rehydration-preprod
+      - dataworks-aws-collections-rehydration-prod
+
   - name: pull-request
     jobs:
       - dataworks-aws-collections-rehydration-pr
+
   - name: update-pipeline
     jobs:
       - update-pipeline
+
+  - name: ami-test
+    jobs:
+      - apply-and-test-with-ami

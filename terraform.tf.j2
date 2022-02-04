@@ -1,5 +1,5 @@
 terraform {
-  required_version = "{{terraform.terraform_13_version}}"
+  required_version =  "{{terraform.terraform_14_version}}"
 
   backend "s3" {
     bucket         = "{{terraform.state_file_bucket}}"
@@ -9,68 +9,200 @@ terraform {
     kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
     dynamodb_table = "remote_state_locks"
   }
+
+  required_providers {
+    aws = {
+      version = "~> 3.42.0"
+    }
+  }
+}
+
+data "terraform_remote_state" "common" {
+  backend   = "s3"
+  workspace = terraform.workspace
+
+  config = {
+    bucket         = "{{terraform.state_file_bucket}}"
+    key            = "terraform/dataworks/common.tfstate"
+    region         = "{{terraform.state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "internal_compute" {
+  backend   = "s3"
+  workspace = terraform.workspace
+
+  config = {
+    bucket         = "{{terraform.state_file_bucket}}"
+    key            = "terraform/dataworks/aws-internal-compute.tfstate"
+    region         = "{{terraform.state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "security-tools" {
+  backend   = "s3"
+  workspace = terraform.workspace
+
+  config = {
+    bucket         = "{{terraform.state_file_bucket}}"
+    key            = "terraform/dataworks/aws-security-tools.tfstate"
+    region         = "{{terraform.state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "artefact" {
+  backend   = "s3"
+  workspace = "management"
+
+  config = {
+    bucket         = "{{terraform.state_file_bucket}}"
+    key            = "terraform/dataworks/management.tfstate"
+    region         = "{{terraform.state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "aws_certificate_authority" {
+  backend = "s3"
+  workspace = terraform.workspace
+  config = {
+    bucket         = "{{terraform.state_file_bucket}}"
+    key            = "terraform/dataworks/aws-certificate-authority.tfstate"
+    region         = "{{terraform.state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "crypto" {
+  backend   = "s3"
+  workspace = local.crypto_workspace[local.management_account[local.environment]]
+  config = {
+    bucket         = "{{terraform.state_file_bucket}}"
+    key            = "terraform/dataworks/aws-crypto.tfstate"
+    region         = "{{terraform.state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "mgmt_ca" {
+  backend   = "s3"
+  workspace = local.management_account[local.environment]
+
+  config = {
+    bucket         = "{{terraform.state_file_bucket}}"
+    key            = "terraform/dataworks/aws-certificate-authority.tfstate"
+    region         = "{{terraform.state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "management_artefact" {
+  backend   = "s3"
+  workspace = "management"
+
+  config = {
+    bucket         = "{{terraform.state_file_bucket}}"
+    key            = "terraform/dataworks/management.tfstate"
+    region         = "{{terraform.state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{{terraform.state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+data "terraform_remote_state" "dataworks_aws_s3_object_tagger" {
+  backend   = "s3"
+  workspace = terraform.workspace
+
+  config = {
+    bucket         = "{{terraform.state_file_bucket}}"
+    key            = "terraform/dataworks/dataworks-aws-s3-object-tagger.tfstate"
+    region         = "{{terraform.state_file_region}}"
+    encrypt        = true
+    kms_key_id     = "arn:aws:kms:{terraform.{state_file_region}}:{{terraform.state_file_account}}:key/{{terraform.state_file_kms_key}}"
+    dynamodb_table = "remote_state_locks"
+  }
+}
+
+variable "assume_role" {
+  default = "ci"
+}
+
+variable "region" {
+  default = "eu-west-2"
 }
 
 provider "aws" {
-  version = "~> 3.42.0"
-  region  = "{{terraform.provider_region}}"
-
+  region  = var.region
   assume_role {
     role_arn = "arn:aws:iam::${lookup(local.account, local.environment)}:role/${var.assume_role}"
   }
+}
 
-  default_tags {
-    tags = local.common_repo_tags
+provider "aws" {
+  alias = "crypto"
+  region  = var.region
+  assume_role {
+    role_arn = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
   }
 }
 
-module "dataworks_common" {
-  source                = "{{terraform.dataworks_common_module_name}}"
-  version               = "{{terraform.dataworks_common_module_version}}"
-  tag_value_environment = local.environment
+provider "aws" {
+  alias   = "management_dns"
+  region  = var.region
+  assume_role {
+    role_arn = "arn:aws:iam::${local.account[local.management_account[local.environment]]}:role/${var.assume_role}"
+  }
+}
+
+// Get AWS Account ID for credentials in use
+data "aws_caller_identity" "current" {}
+
+data "aws_region" "current" {}
+data "aws_availability_zones" "available" {}
+
+locals {
+  account = { {% for key, value in accounts.items() %}
+    {{key}} = "{{value}}"{% endfor %}
+  }
 }
 
 locals {
-  name        = "dataworks-aws-collections-rehydration"
+
   environment = terraform.workspace == "default" ? "development" : terraform.workspace
 
-  account = {
-    {%- for key, value in accounts.items() %}
-      {{key}} = "{{value}}"
-    {%- endfor %}
+  tags = {
+  {% for key, value in common_tags.items() %}
+    {{key}} = "{{value}}"{% endfor %}
+    Environment  = local.environment
+    Application  = "dataworks-aws-collections-rehydration"
   }
 
-  persistence_tag_value = {
-    development = "mon-fri,08:00-18:00"
-    qa          = "Ignore"
-    integration = "mon-fri,08:00-18:00"
-    preprod     = "Ignore"
-    production  = "Ignore"
+  env_prefix = {
+    development = "dev."
+    qa          = "qa."
+    stage       = "stg."
+    integration = "int."
+    preprod     = "pre."
+    production  = ""
   }
 
-  auto_shutdown_tag_value = {
-    development = "True"
-    qa          = "False"
-    integration = "True"
-    preprod     = "False"
-    production  = "False"
-  }
-
-  overridden_tags = {
-    Role         = "repo_template_terraform"
-    Owner        = "dataworks-aws-collections-rehydration"
-    Persistence  = local.persistence_tag_value[local.environment]
-    AutoShutdown = local.auto_shutdown_tag_value[local.environment]
-  }
-
-  common_repo_tags = "${merge(module.dataworks_common.common_tags, local.overridden_tags)}"
-
-  cidr_block = {
-  {%- for environment, ranges in cidr_block.items() %}
-      {{ environment }} = {
-        {%- for key, value in ranges.items() %}
-          {{ key }} = "{{ value }}"{% endfor %}
-      } {%- endfor %}
-  }
+  dataworks_domain_name = "{{dataworks_domain_name}}"
 }
-

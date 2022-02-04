@@ -2,7 +2,7 @@ jobs:
   - name: update-pipeline
     plan:
       - get: dataworks-aws-collections-rehydration
-        resource: dataworks-aws-collections-rehydration-update-pipeline
+        resource: dataworks-aws-collections-rehydration-pipeline
         trigger: true
       - task: aviator
         config:
