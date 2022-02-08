@@ -64,6 +64,9 @@ resource "aws_s3_bucket_object" "configurations" {
   content = templatefile("${path.module}/cluster_config/configurations.yaml.tpl",
     {
       s3_log_bucket                                 = data.terraform_remote_state.security-tools.outputs.logstore_bucket.id
+      s3_htme_bucket                                = data.terraform_remote_state.internal_compute.outputs.htme_s3_bucket.id
+      s3_historical_audit_bucket                    = data.terraform_remote_state.aws_ingestion.outputs.landed_write_light_bucket.bucket
+      s3_historical_equality_bucket                 = data.terraform_remote_state.aws_ingestion.outputs.landed_write_light_bucket.bucket
       s3_log_prefix                                 = local.s3_log_prefix
       proxy_no_proxy                                = replace(replace(local.no_proxy, ",", "|"), ".s3", "*.s3")
       proxy_http_host                               = data.terraform_remote_state.internal_compute.outputs.internet_proxy.host
@@ -95,6 +98,15 @@ resource "aws_s3_bucket_object" "configurations" {
       hive_max_reducers                             = local.hive_max_reducers[local.environment]
       map_reduce_vcores_per_task                    = local.map_reduce_vcores_per_task[local.environment]
       map_reduce_vcores_per_node                    = local.map_reduce_vcores_per_node[local.environment]
+
+      spark_kyro_buffer                   = local.spark_kyro_buffer
+      spark_executor_cores                = local.spark_executor_cores[local.environment]
+      spark_executor_memory               = local.spark_executor_memory[local.environment]
+      spark_yarn_executor_memory_overhead = local.spark_yarn_executor_memory_overhead[local.environment]
+      spark_driver_memory                 = local.spark_driver_memory[local.environment]
+      spark_driver_cores                  = local.spark_driver_cores[local.environment]
+      spark_executor_instances            = local.spark_executor_instances
+      spark_default_parallelism           = local.spark_default_parallelism
     }
   )
 }

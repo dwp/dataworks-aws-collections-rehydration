@@ -21,10 +21,4 @@ set -Eeuo pipefail
     echo "$SNAPSHOT_TYPE" >>      /opt/emr/snapshot_type.txt
     echo "$EXPORT_DATE" >>        /opt/emr/export_date.txt
 
-    log_wrapper_message "Creating collections-rehydration Databases"
-
-    hive -e "CREATE DATABASE IF NOT EXISTS ${collections_rehydration_db} LOCATION '${published_bucket}/${hive_metastore_location}';"
-
-    log_wrapper_message "Finished creating collections-rehydration Databases"
-
 ) >> /var/log/dataworks-aws-collections-rehydration/create-collections-rehydration-databases.log 2>&1
