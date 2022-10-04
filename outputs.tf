@@ -13,4 +13,5 @@ output "private_dns" {
     collections_rehydration_service_discovery_dns = aws_service_discovery_private_dns_namespace.collections_rehydration_services
     collections_rehydration_service_discovery     = aws_service_discovery_service.collections_rehydration_services
   }
+  sensitive = true
 }
