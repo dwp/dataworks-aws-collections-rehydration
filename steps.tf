@@ -1,4 +1,4 @@
-resource "aws_s3_bucket_object" "create_databases_sh" {
+resource "aws_s3_object" "create_databases_sh" {
   bucket     = data.terraform_remote_state.common.outputs.config_bucket.id
   kms_key_id = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   key        = "component/dataworks-aws-collections-rehydration/create-collections-rehydration-databases.sh"
@@ -11,7 +11,7 @@ resource "aws_s3_bucket_object" "create_databases_sh" {
   )
 }
 
-resource "aws_s3_bucket_object" "run_collections_rehydration" {
+resource "aws_s3_object" "run_collections_rehydration" {
   bucket     = data.terraform_remote_state.common.outputs.config_bucket.id
   kms_key_id = data.terraform_remote_state.common.outputs.config_bucket_cmk.arn
   key        = "component/dataworks-aws-collections-rehydration/run-collections-rehydration.sh"
