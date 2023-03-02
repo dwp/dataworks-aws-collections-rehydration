@@ -29,7 +29,7 @@ resource "aws_s3_bucket_object" "instances" {
       add_slave_sg       = aws_security_group.dataworks_aws_collections_rehydration_common.id
       subnet_id = (
         local.use_capacity_reservation[local.environment] == true ?
-        data.terraform_remote_state.internal_compute.outputs.collections_rehydration_subnet.subnets[index(data.terraform_remote_state.internal_compute.outputs.collections_rehydration_subnet.subnets.*.availability_zone[0], data.terraform_remote_state.common.outputs.ec2_capacity_reservations.emr_m5_16_x_large_2a.availability_zone)].id :
+        data.terraform_remote_state.internal_compute.outputs.collections_rehydration_subnet.subnets[index(data.terraform_remote_state.internal_compute.outputs.collections_rehydration_subnet.subnets.*.availability_zone, data.terraform_remote_state.common.outputs.ec2_capacity_reservations.emr_m5_16_x_large_2a.availability_zone)].id :
         data.terraform_remote_state.internal_compute.outputs.collections_rehydration_subnet.subnets[index(data.terraform_remote_state.internal_compute.outputs.collections_rehydration_subnet.subnets.*.availability_zone, local.emr_subnet_non_capacity_reserved_environments)].id
       )
       master_sg                           = aws_security_group.dataworks_aws_collections_rehydration_master.id
