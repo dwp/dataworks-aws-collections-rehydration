@@ -68,3 +68,15 @@ variable "spark_executor_instances" {
     production  = 600 # More than possible as it won't create them if no core or memory available
   }
 }
+
+variable "tanium_port_1" {
+  description = "tanium port 1"
+  type        = string
+  default     = "16563"
+}
+
+variable "tanium_port_2" {
+  description = "tanium port 2"
+  type        = string
+  default     = "16555"
+}

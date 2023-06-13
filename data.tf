@@ -69,3 +69,6 @@ resource "aws_iam_policy" "dataworks_aws_collections_rehydration_read_write_data
   policy      = data.aws_iam_policy_document.dataworks_aws_collections_rehydration_read_write_data.json
 }
 
+data "aws_ec2_managed_prefix_list" "list" {
+  name = "dwp-*-aws-cidrs-*"
+}
