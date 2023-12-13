@@ -1,16 +1,25 @@
 resources:
-  - name: dataworks-aws-collections-rehydration-pr
-    type: pull-request
-    source:
-      repository: dwp/dataworks-aws-collections-rehydration
-      access_token: ((dataworks-secrets.concourse_github_pat))
-    webhook_token: ((dataworks.concourse_github_webhook_token))
-    check_every: 5m
+  # - name: dataworks-aws-collections-rehydration-pr
+  #   type: pull-request
+  #   source:
+  #     repository: dwp/dataworks-aws-collections-rehydration
+  #     access_token: ((dataworks-secrets.concourse_github_pat))
+  #   webhook_token: ((dataworks.concourse_github_webhook_token))
+  #   check_every: 5m
 
   - name: dataworks-aws-collections-rehydration
     type: git
     source:
       branch: master
+      uri: https://github.com/dwp/dataworks-aws-collections-rehydration.git
+      access_token: ((dataworks-secrets.concourse_github_pat))
+    webhook_token: ((dataworks.concourse_github_webhook_token))
+    check_every: 5m
+
+  - name: dataworks-aws-collections-rehydration-develop
+    type: git
+    source:
+      branch: develop
       uri: https://github.com/dwp/dataworks-aws-collections-rehydration.git
       access_token: ((dataworks-secrets.concourse_github_pat))
     webhook_token: ((dataworks.concourse_github_webhook_token))
@@ -28,14 +37,14 @@ resources:
     webhook_token: ((dataworks.concourse_github_webhook_token))
     check_every: 5m
 
-  - name: emr-launcher-release
-    type: github-release
-    source:
-      owner: dwp
-      repository: emr-launcher
-      access_token: ((dataworks-secrets.concourse_github_pat))
-    check_every: 1h
-    webhook_token: ((dataworks.concourse_github_webhook_token))
+  # - name: emr-launcher-release
+  #   type: github-release
+  #   source:
+  #     owner: dwp
+  #     repository: emr-launcher
+  #     access_token: ((dataworks-secrets.concourse_github_pat))
+  #   check_every: 1h
+  #   webhook_token: ((dataworks.concourse_github_webhook_token))
 
   - name: emr-relauncher-release
     type: github-release
