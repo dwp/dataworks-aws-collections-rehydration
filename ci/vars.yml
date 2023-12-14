@@ -1,5 +1,4 @@
 emr_launcher_version: "0.0.44"
-
 emr-relauncher-version:
   development: "0.0.8"
   qa:          "0.0.8"

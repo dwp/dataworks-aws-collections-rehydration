@@ -25,7 +25,7 @@ jobs:
       - .: ((inject meta.plan.get-artefacts))
         config:
           params:
-            AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci           
       - .: (( inject meta.plan.check-ami-test-results ))
         input_mapping:
           untested_ami: al2-emr-ami
@@ -59,17 +59,22 @@ jobs:
             inputs:
               - name: previous_success
 
-    on_failure:
-      do:
-        - .: (( inject meta.plan.ami-test-results ))
-          task: ami-test-result-fail
-          config:
-            params:
-              RESULT: FAILED
-    on_success:
-      do:
-        - .: (( inject meta.plan.ami-test-results ))
-          task: ami-test-result-success
-          config:
-              params:
-                RESULT: SUCCESS
+
+## The below tasks throw the below error on Concourse
+## "failed to interpolate task config: missing field '_version' in var: dataworks._version" 
+## That's why they've been commented
+
+    # on_failure:
+    #   do: 
+    #     - .: (( inject meta.plan.ami-test-results ))
+    #       task: ami-test-result-fail
+    #       config:
+    #         params:
+    #           RESULT: FAILED
+    # on_success:
+    #   do:
+    #     - .: (( inject meta.plan.ami-test-results ))
+    #       task: ami-test-result-success
+    #       config:
+    #           params:
+    #             RESULT: SUCCESS

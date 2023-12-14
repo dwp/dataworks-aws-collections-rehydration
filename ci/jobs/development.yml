@@ -6,7 +6,6 @@ jobs:
           - put: meta
             resource: meta-development
           - get: dataworks-aws-collections-rehydration
-          - get: dataworks-aws-collections-rehydration-develop
             trigger: true
           - get: emr-relauncher-release
             version: { tag: ((emr-relauncher-version.development)) }

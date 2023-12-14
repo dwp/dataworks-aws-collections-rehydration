@@ -76,7 +76,6 @@ jobs:
           inputs:
             - name: dataworks-aws-collections-rehydration
             - name: terraform-config
-            - name: emr-launcher-release
             - name: al2-emr-ami
             - name: emr-relauncher-release
         input_mapping:
