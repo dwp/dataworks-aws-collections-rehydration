@@ -62,7 +62,7 @@ jobs:
 
 ## The below tasks throw the below error on Concourse
 ## "failed to interpolate task config: missing field '_version' in var: dataworks._version" 
-## That's why they've been commented
+##  Commented for the purpose of migration
 
     # on_failure:
     #   do: 
