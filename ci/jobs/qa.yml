@@ -18,6 +18,7 @@ jobs:
       - .: ((inject meta.plan.get-artefacts))
         config:
           params:
+            launcher_version: ((emr_launcher_version.qa))
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
       - .: (( inject meta.plan.terraform-bootstrap ))
         config:

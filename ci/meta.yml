@@ -51,7 +51,7 @@ meta:
       config:
         params:
           DETAILED_EXITCODE: -detailed-exitcode
-          launcher_version: ((emr_launcher_version))
+          # launcher_version: ((emr_launcher_version))
         platform: linux
         image_resource:
           type: docker-image
@@ -89,7 +89,7 @@ meta:
       config:
         params:
           DETAILED_EXITCODE: -detailed-exitcode
-          launcher_version: ((emr_launcher_version))
+          launcher_version: ((emr_launcher_version.development))
         run:
           path: sh
           args:
