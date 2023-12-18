@@ -58,7 +58,7 @@ jobs:
             TF_CLI_ARGS_apply: -lock-timeout=300s
             TF_CLI_ARGS_plan: -lock-timeout=300s
             TF_WORKSPACE: qa
-            launcher_version: ((emr_launcher_version))
+            launcher_version: ((emr_launcher_version.qa))
           run:
             path: sh
             dir: dataworks-aws-collections-rehydration
