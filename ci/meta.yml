@@ -254,7 +254,7 @@ meta:
             tag: ((dataworks.docker_awscli_version))
         params:
           AWS_DEFAULT_REGION: ((dataworks.aws_region))
-          launcher_version: ((emr_launcher_version))
+          launcher_version: ((emr_launcher_version.development))
           artefact_bucket: ((manifest.artefact_bucket))
         run:
           path: sh
