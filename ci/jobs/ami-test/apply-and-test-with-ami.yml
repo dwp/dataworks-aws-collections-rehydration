@@ -60,21 +60,21 @@ jobs:
               - name: previous_success
 
 
-## The below tasks throw the below error on Concourse
-## "failed to interpolate task config: missing field '_version' in var: dataworks._version" 
-##  Commented for the purpose of migration
+# The below tasks throw the below error on Concourse
+# "failed to interpolate task config: missing field '_version' in var: dataworks._version" 
+#  Commented for the purpose of migration
 
-    # on_failure:
-    #   do: 
-    #     - .: (( inject meta.plan.ami-test-results ))
-    #       task: ami-test-result-fail
-    #       config:
-    #         params:
-    #           RESULT: FAILED
-    # on_success:
-    #   do:
-    #     - .: (( inject meta.plan.ami-test-results ))
-    #       task: ami-test-result-success
-    #       config:
-    #           params:
-    #             RESULT: SUCCESS
+    on_failure:
+      do: 
+        - .: (( inject meta.plan.ami-test-results ))
+          task: ami-test-result-fail
+          config:
+            params:
+              RESULT: FAILED
+    on_success:
+      do:
+        - .: (( inject meta.plan.ami-test-results ))
+          task: ami-test-result-success
+          config:
+              params:
+                RESULT: SUCCESS
