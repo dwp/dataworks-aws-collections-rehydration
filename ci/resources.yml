@@ -60,6 +60,19 @@ resources:
         name: dw-al2-emr-ami-*
         architecture: x86_64
 
+  - name: dw-al2-emr-pdm-ami
+    type: ami
+    check_every: 1h
+    source:
+      aws_role_arn: arn:aws:iam::((aws_account.management)):role/ci
+      region: ((dataworks.aws_region))
+      filters:
+        owner-id: ((aws_account.management))
+        is-public: false
+        state: available
+        name: dw-al2-emr-pdm-ami-*
+        architecture: x86_64
+
   - name: untested-al2-emr-ami
     type: ami
     check_every: 5m
