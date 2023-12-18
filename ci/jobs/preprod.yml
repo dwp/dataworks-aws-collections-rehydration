@@ -7,11 +7,6 @@ jobs:
             trigger: true
             passed:
               - dataworks-aws-collections-rehydration-qa
-          - get: emr-launcher-release
-            version: { tag: ((emr-launcher-version.preprod)) }
-            trigger: true
-            passed:
-              - dataworks-aws-collections-rehydration-qa
           - get: emr-relauncher-release
             version: { tag: ((emr-relauncher-version.preprod)) }
             trigger: true
@@ -21,6 +16,11 @@ jobs:
             trigger: true
             passed:
               - dataworks-aws-collections-rehydration-qa
+      - .: ((inject meta.plan.get-artefacts))
+        config:
+          params:
+            launcher_version: ((emr_launcher_version.preprod)) 
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
       - .: (( inject meta.plan.terraform-bootstrap ))
         config:
           params:

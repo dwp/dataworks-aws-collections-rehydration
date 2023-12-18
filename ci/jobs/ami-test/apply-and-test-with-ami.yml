@@ -14,11 +14,6 @@ jobs:
             trigger: true
             passed:
               - dataworks-aws-collections-rehydration-qa
-          - get: emr-launcher-release
-            version: { tag: ((emr-launcher-version.qa)) }
-            trigger: true
-            passed:
-              - dataworks-aws-collections-rehydration-qa
           - get: emr-relauncher-release
             version: { tag: ((emr-relauncher-version.qa)) }
             trigger: false
@@ -27,6 +22,10 @@ jobs:
           - get: al2-emr-ami
             resource: untested-al2-emr-ami
             trigger: true
+      - .: ((inject meta.plan.get-artefacts))
+        config:
+          params:
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci           
       - .: (( inject meta.plan.check-ami-test-results ))
         input_mapping:
           untested_ami: al2-emr-ami
@@ -60,13 +59,37 @@ jobs:
             inputs:
               - name: previous_success
 
+
+# The below tasks throw the below error on Concourse
+# "failed to interpolate task config: missing field '_version' in var: dataworks._version" 
+#  Commented for the purpose of migration
+
     on_failure:
-      do:
+      do: 
         - .: (( inject meta.plan.ami-test-results ))
           task: ami-test-result-fail
           config:
             params:
               RESULT: FAILED
+        - get: al2-emr-ami-restored
+          resource: dw-al2-emr-pdm-ami
+          trigger: false
+        - .: (( inject meta.plan.terraform-bootstrap ))
+          config:
+            params:
+              AWS_ACC: ((aws_account.qa))
+        - .: (( inject meta.plan.terraform-apply ))
+          config:
+            params:
+              TF_WORKSPACE: qa
+          input_mapping:
+            al2-emr-ami: al2-emr-ami-restored
+        - .: (( inject meta.plan.terraform-plan ))
+          config:
+            params:
+              TF_WORKSPACE: qa
+          input_mapping:
+            al2-emr-ami: al2-emr-ami-restored
     on_success:
       do:
         - .: (( inject meta.plan.ami-test-results ))
@@ -74,4 +97,3 @@ jobs:
           config:
               params:
                 RESULT: SUCCESS
-

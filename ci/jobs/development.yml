@@ -7,9 +7,6 @@ jobs:
             resource: meta-development
           - get: dataworks-aws-collections-rehydration
             trigger: true
-          - get: emr-launcher-release
-            version: { tag: ((emr-launcher-version.development)) }
-            trigger: true
           - get: emr-relauncher-release
             version: { tag: ((emr-relauncher-version.development)) }
             trigger: true
@@ -17,6 +14,11 @@ jobs:
             trigger: false
           - get: al2-emr-ami
             trigger: true
+      - .: ((inject meta.plan.get-artefacts))
+        config:
+          params:
+            launcher_version: ((emr_launcher_version.development))  
+            AWS_ROLE_ARN: arn:aws:iam::((aws_account.management)):role/ci
       - .: (( inject meta.plan.terraform-bootstrap ))
         config:
           params:
@@ -33,3 +35,4 @@ jobs:
             TF_WORKSPACE: default
             AWS_ACC: ((aws_account.development))
             AWS_ROLE_ARN: arn:aws:iam::((aws_account.development)):role/ci
+        

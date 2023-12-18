@@ -49,6 +49,9 @@ meta:
       task: terraform-apply
       .: (( inject meta.plan.terraform-common-config ))
       config:
+        params:
+          DETAILED_EXITCODE: -detailed-exitcode
+          launcher_version: ((emr_launcher_version.development))
         platform: linux
         image_resource:
           type: docker-image
@@ -67,7 +70,7 @@ meta:
               export TF_VAR_emr_ami_id=$(cat ../al2-emr-ami/id)
               cp ../terraform-config/terraform.tf .
               cp ../terraform-config/terraform.tfvars .
-              export TF_VAR_emr_launcher_zip="{base_path = \"../emr-launcher-release\", version = \"$(cat ../emr-launcher-release/version)\"}"
+              export TF_VAR_emr_launcher_zip="{base_path = \"../artefacts\", version = \"${launcher_version}\"}"
               export TF_VAR_dataworks_emr_relauncher_zip="{base_path = \"../emr-relauncher-release\", version = \"$(cat ../emr-relauncher-release/version)\"}"
               terraform workspace show
               terraform init
@@ -76,14 +79,17 @@ meta:
         inputs:
           - name: dataworks-aws-collections-rehydration
           - name: terraform-config
-          - name: emr-launcher-release
           - name: al2-emr-ami
           - name: emr-relauncher-release
+          - name: artefacts
 
     terraform-plan:
       task: terraform-plan
       .: (( inject meta.plan.terraform-common-config ))
       config:
+        params:
+          DETAILED_EXITCODE: -detailed-exitcode
+          launcher_version: ((emr_launcher_version.development))
         run:
           path: sh
           args:
@@ -95,7 +101,7 @@ meta:
               export TF_VAR_emr_ami_id=$(cat ../al2-emr-ami/id)
               cp ../terraform-config/terraform.tf .
               cp ../terraform-config/terraform.tfvars .
-              export TF_VAR_emr_launcher_zip="{base_path = \"../emr-launcher-release\", version = \"$(cat ../emr-launcher-release/version)\"}"
+              export TF_VAR_emr_launcher_zip="{base_path = \"../artefacts\", version = \"${launcher_version}\"}"
               export TF_VAR_dataworks_emr_relauncher_zip="{base_path = \"../emr-relauncher-release\", version = \"$(cat ../emr-relauncher-release/version)\"}"
               terraform workspace show
               terraform init
@@ -104,11 +110,9 @@ meta:
         inputs:
           - name: dataworks-aws-collections-rehydration
           - name: terraform-config
-          - name: emr-launcher-release
           - name: al2-emr-ami
           - name: emr-relauncher-release
-      params:
-        DETAILED_EXITCODE: -detailed-exitcode
+          - name: artefacts
 
     e2e-tests:
       task: e2e-tests
@@ -152,7 +156,7 @@ meta:
           type: docker-image
           source:
             repository: ((dataworks.terraform_repository))
-            tag: ((dataworks._version))
+            tag: ((dataworks.terraform_version))
         params:
           AWS_DEFAULT_REGION: ((dataworks.aws_region))
           GIT_USERNAME: ((dataworks.concourse_github_username))
@@ -237,3 +241,30 @@ meta:
         inputs:
           - name: meta
           - name: untested_ami
+
+    get-artefacts:
+      task: get-artefacts
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: ((dataworks.docker_awscli_repository))
+            version: ((dataworks.docker_awscli_version))
+            tag: ((dataworks.docker_awscli_version))
+        params:
+          AWS_DEFAULT_REGION: ((dataworks.aws_region))
+          launcher_version: ((emr_launcher_version.development))
+          artefact_bucket: ((manifest.artefact_bucket))
+        run:
+          path: sh
+          args:
+            - -exc
+            - |
+              export AWS_DEFAULT_REGION
+              source /assume-role
+              set +x
+              URL="s3://${artefact_bucket}/emr-launcher/gitlabci/emr-launcher-${launcher_version}.zip"
+              aws s3 cp "$URL" ./artefacts/emr-launcher-${launcher_version}.zip
+        outputs:
+          - name: artefacts
