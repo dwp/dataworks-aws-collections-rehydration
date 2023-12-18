@@ -1,9 +1,9 @@
 emr_launcher_version: 
-  development: "0.0.44"
-  qa:          "0.0.44"
-  integration: "0.0.44"
-  preprod:     "0.0.44"
-  production:  "0.0.44"
+  development: "0.0.50"
+  qa:          "0.0.50"
+  integration: "0.0.50"
+  preprod:     "0.0.50"
+  production:  "0.0.50"
 emr-relauncher-version:
   development: "0.0.8"
   qa:          "0.0.8"
