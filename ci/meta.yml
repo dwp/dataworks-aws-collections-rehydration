@@ -71,7 +71,7 @@ meta:
               cp ../terraform-config/terraform.tf .
               cp ../terraform-config/terraform.tfvars .
               export TF_VAR_emr_launcher_zip="{base_path = \"../artefacts\", version = \"${launcher_version}\"}"
-              export TF_VAR_dataworks_emr_relauncher_zip="{base_path = \"../emr-relauncher-release\", version = \"$(cat ../emr-relauncher-release/version)\"}"
+              export TF_VAR_dataworks_emr_relauncher_zip="{base_path = \"../artefacts\", version = \"${emr_relauncher_ver}\"}"
               terraform workspace show
               terraform init
               terraform plan -out terraform.plan
@@ -80,7 +80,6 @@ meta:
           - name: dataworks-aws-collections-rehydration
           - name: terraform-config
           - name: al2-emr-ami
-          - name: emr-relauncher-release
           - name: artefacts
 
     terraform-plan:
@@ -102,7 +101,7 @@ meta:
               cp ../terraform-config/terraform.tf .
               cp ../terraform-config/terraform.tfvars .
               export TF_VAR_emr_launcher_zip="{base_path = \"../artefacts\", version = \"${launcher_version}\"}"
-              export TF_VAR_dataworks_emr_relauncher_zip="{base_path = \"../emr-relauncher-release\", version = \"$(cat ../emr-relauncher-release/version)\"}"
+              export TF_VAR_dataworks_emr_relauncher_zip="{base_path = \"../artefacts\", version = \"${emr_relauncher_ver}\"}"
               terraform workspace show
               terraform init
               terraform plan $DETAILED_EXITCODE
@@ -111,7 +110,6 @@ meta:
           - name: dataworks-aws-collections-rehydration
           - name: terraform-config
           - name: al2-emr-ami
-          - name: emr-relauncher-release
           - name: artefacts
 
     e2e-tests:
@@ -267,5 +265,7 @@ meta:
               set +x
               URL="s3://${artefact_bucket}/emr-launcher/gitlabci/emr-launcher-${launcher_version}.zip"
               aws s3 cp "$URL" ./artefacts/emr-launcher-${launcher_version}.zip
+              URL="s3://${artefact_bucket}/emr-relauncher/gitlabci/emr-relauncher-${emr_relauncher_ver}.zip"
+              aws s3 cp "$URL" ./artefacts/dataworks-emr-relauncher-${emr_relauncher_ver}.zip
         outputs:
           - name: artefacts
