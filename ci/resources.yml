@@ -28,15 +28,6 @@ resources:
     webhook_token: ((dataworks.concourse_github_webhook_token))
     check_every: 5m
 
-  - name: emr-relauncher-release
-    type: github-release
-    source:
-      owner: dwp
-      repository: dataworks-emr-relauncher
-      access_token: ((dataworks-secrets.concourse_github_pat))
-    check_every: 5m
-    webhook_token: ((dataworks.concourse_github_webhook_token))
-
   - name: dataworks-behavioural-framework
     type: git
     source:
