@@ -5,9 +5,6 @@ jobs:
         - get: dataworks-aws-collections-rehydration-pr
           trigger: true
           version: every
-        - get: emr-relauncher-release
-          version: { tag: ((emr-relauncher-version.qa)) }
-          trigger: false
         - get: al2-emr-ami
           trigger: true
       - .: ((inject meta.plan.get-artefacts))

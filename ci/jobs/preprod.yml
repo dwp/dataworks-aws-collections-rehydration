@@ -7,11 +7,6 @@ jobs:
             trigger: true
             passed:
               - dataworks-aws-collections-rehydration-qa
-          - get: emr-relauncher-release
-            version: { tag: ((emr-relauncher-version.preprod)) }
-            trigger: true
-            passed:
-              - dataworks-aws-collections-rehydration-qa
           - get: al2-emr-ami
             trigger: true
             passed:
