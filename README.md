@@ -1,3 +1,5 @@
+## DO NOT USE THIS REPO - MIGRATED TO GITLAB
+
 # dataworks-aws-collections-rehydration
 
 After cloning this repo, please generate `terraform.tf` and `terraform.tfvars` files:  
